@@ -81,16 +81,16 @@ namespace CompanyStructuresWebAPI.Repository
                 return null;
         }
 
-        //public void AddOrUpdateCompany(Model.Company company)
-        //{
-        //    SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
-        //    conn.Open();
+        public void AddOrUpdateCompany(Model.Company company)
+        {
+            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
+            conn.Open();
 
-        //    SqlCommand cmd = new SqlCommand("spCreateOrUpdateCompany", conn);
-        //    cmd.CommandType = CommandType.StoredProcedure;
-        //    cmd.Parameters.Add(company.Id);
-        //    cmd.Parameters.Add(company.CompanyName);
-        //    cmd.ExecuteNonQuery();
-        //}
+            SqlCommand cmd = new SqlCommand("spCreateOrUpdateCompany", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add(company.Id);
+            cmd.Parameters.Add(company.CompanyName);
+            cmd.ExecuteNonQuery();
+        }
     }
 }
