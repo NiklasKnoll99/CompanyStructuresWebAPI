@@ -12,7 +12,6 @@ namespace CompanyStructuresWebAPI.Controller
     {
         public IActionResult GetAll()
         {
-
             Repository.CompanyRepository companyRepo = new Repository.CompanyRepository();
 
             List<Model.Company> companies = companyRepo.GetCompanies();

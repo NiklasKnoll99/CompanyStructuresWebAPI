@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyStructuresWebAPI.Repository
 {
-    [Route("departments")]
     public class DepartmentRepository : Microsoft.AspNetCore.Mvc.Controller
     {
         public List<Model.Department> GetDepartments()
@@ -46,7 +45,6 @@ namespace CompanyStructuresWebAPI.Repository
                 return null;
         }
 
-        [HttpGet("{Id}")]
         public Model.Department GetDepartmentById(int Id)
         {
             SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
