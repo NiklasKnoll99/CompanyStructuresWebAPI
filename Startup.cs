@@ -25,10 +25,19 @@ namespace CompanyStructuresWebAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.Run(async (context) =>
-            //{
-            //    await context.Response.WriteAsync("Hello World!");
-            //});
+            app.Run(async (context) =>
+            {
+                //await context.Response.WriteAsync("Hello World!");
+
+                // TEST
+                Repository.CompanyRepository repo = new Repository.CompanyRepository();
+                repo.AddOrUpdateCompany(new Model.Company()
+                {
+                    Id = 25,
+                    CompanyName = "Apple Inc."
+                });
+                int x = 0;
+            });
         }
     }
 }
