@@ -72,5 +72,17 @@ namespace CompanyStructuresWebAPI.Repository
             else
                 return null;
         }
+
+        public void AddOrUpdateDepartment(Model.Department department)
+        {
+            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
+            conn.Open();
+
+            SqlCommand cmd = new SqlCommand("spCreateOrUpdateDepartment", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Id", department.Id);
+            cmd.Parameters.AddWithValue("@DepartmentName", department.DepartmentName);
+            cmd.ExecuteNonQuery();
+        }
     }
 }

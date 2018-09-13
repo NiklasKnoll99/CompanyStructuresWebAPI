@@ -88,8 +88,8 @@ namespace CompanyStructuresWebAPI.Repository
 
             SqlCommand cmd = new SqlCommand("spCreateOrUpdateCompany", conn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add(company.Id);
-            cmd.Parameters.Add(company.CompanyName);
+            cmd.Parameters.AddWithValue("@Id", company.Id);
+            cmd.Parameters.AddWithValue("@CompanyName", company.CompanyName);
             cmd.ExecuteNonQuery();
         }
     }

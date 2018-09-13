@@ -18,7 +18,7 @@ namespace CompanyStructuresWebAPI.Controller
 
             if (departments != null)
             {
-                return Ok(new JsonResult(departments));
+                return Ok(departments);
             }
 
             else

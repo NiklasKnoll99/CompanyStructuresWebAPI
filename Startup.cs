@@ -28,19 +28,19 @@ namespace CompanyStructuresWebAPI
 
             app.UseMvc();
 
-            //app.Run(async (context) =>
-            //{
-            //    await context.Response.WriteAsync("Hello World!");
+            app.Run(async (context) =>
+            {
+                await context.Response.WriteAsync("Hello World!");
 
-            //    // TEST
-            //    //Repository.CompanyRepository repo = new Repository.CompanyRepository();
-            //    //repo.AddOrUpdateCompany(new Model.Company()
-            //    //{
-            //    //    Id = 25,
-            //    //    CompanyName = "Apple Inc."
-            //    //});
-            //    //int x = 0;
-            //});
+                //TEST
+                Repository.DepartmentRepository repo = new Repository.DepartmentRepository();
+                repo.AddOrUpdateDepartment(new Model.Department()
+                {
+                    Id = 3,
+                    DepartmentName = "CreativeTeam"
+                });
+                int x = 0;
+            });
         }
     }
 }
