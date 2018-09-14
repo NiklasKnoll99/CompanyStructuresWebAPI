@@ -56,17 +56,6 @@ namespace CompanyStructuresWebAPI.Repository
                 conn.Close();
 
                 List<Model.Department> departments = null;
-
-                //for (short i = 0; i < table.Rows.Count; i++)
-                //{
-                //    departments.Add(new Model.Department()
-                //    {
-                //        Id = (int)table.Rows[i][0],
-                //        DepartmentName = (string)table.Rows[i][1],
-                //        CompanyName = (string)table.Rows[i][2]
-                //    });
-                //}
-
                 departments = conn.Query<Model.Department>(cmd.CommandText).ToList();
 
                 return departments;
@@ -89,13 +78,6 @@ namespace CompanyStructuresWebAPI.Repository
             if (adapter.Fill(table) > 0)
             {
                 conn.Close();
-
-                //Model.Department department = new Model.Department()
-                //{
-                //    Id = (int)table.Rows[0][0],
-                //    DepartmentName = (string)table.Rows[0][1],
-                //    CompanyName = (string)table.Rows[0][2]
-                //};
 
                 DynamicParameters dParams = new DynamicParameters();
                 dParams.Add("@Id", Id);
