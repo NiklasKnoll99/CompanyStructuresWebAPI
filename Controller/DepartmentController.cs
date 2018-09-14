@@ -57,6 +57,23 @@ namespace CompanyStructuresWebAPI.Controller
             }
         }
 
+        [HttpPut]
+        public IActionResult Put([FromBody] Model.Department department)
+        {
+            if (department == null)
+                return BadRequest();
+
+            else
+            {
+                Repository.DepartmentRepository departmentRepo = new Repository.DepartmentRepository();
+
+                // Check for success
+                departmentRepo.Update(department);
+
+                return Ok();
+            }
+        }
+
         [HttpDelete("delete/{Id}")]
         public IActionResult Delete(int Id)
         {
