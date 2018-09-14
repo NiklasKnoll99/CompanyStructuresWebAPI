@@ -50,7 +50,7 @@ namespace CompanyStructuresWebAPI.Controller
             {
                 Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
 
-                // Check for successful company construction
+                // Exception handling
                 companyRepo.Create(company);
 
                 return Created("companies", company);
@@ -67,7 +67,7 @@ namespace CompanyStructuresWebAPI.Controller
             {
                 Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
 
-                // Check for success
+                // Exception handling
                 companyRepo.Update(company);
 
                 return Ok();
@@ -79,7 +79,7 @@ namespace CompanyStructuresWebAPI.Controller
         {
             Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
 
-            // Check for success
+            // Exception handling
             companyRepo.Delete(Id);
 
             return Ok();
