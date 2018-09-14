@@ -26,18 +26,24 @@ namespace CompanyStructuresWebAPI.Repository
         {
         }
 
-        void AddOrUpdateCompany(Model.Company company)
+        int AddOrUpdateCompany(Model.Company company)
         {
             SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
             conn.Open();
+
+            SqlParameter param = new SqlParameter("@RetVal", SqlDbType.Int);
+            param.Direction = ParameterDirection.ReturnValue;
 
             SqlCommand cmd = new SqlCommand("spCreateOrUpdateCompany", conn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Id", company.Id);
             cmd.Parameters.AddWithValue("@CompanyName", company.CompanyName);
+            cmd.Parameters.Add(param);
             cmd.ExecuteNonQuery();
 
             conn.Close();
+
+            return (int)cmd.Parameters["@RetVal"].Value;
         }
 
         public List<Model.Company> GetCompanies()
@@ -88,32 +94,37 @@ namespace CompanyStructuresWebAPI.Repository
                 return null;
         }
 
-        public void Create(Model.Dto.CompanyDto company)
+        public int Create(Model.Dto.CompanyDto company)
         {
-            AddOrUpdateCompany(new Model.Company()
+            return AddOrUpdateCompany(new Model.Company()
             {
                 Id = -1,
                 CompanyName = company.CompanyName
             });
         }
 
-        public void Update(Model.Company company)
+        public int Update(Model.Company company)
         {
-            AddOrUpdateCompany(company);
+            return AddOrUpdateCompany(company);
         }
 
-        public void Delete(int Id)
+        public int Delete(int Id)
         {
             SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
             conn.Open();
 
+            SqlParameter param = new SqlParameter("@RetVal", SqlDbType.Int);
+            param.Direction = ParameterDirection.ReturnValue;
+
             SqlCommand cmd = new SqlCommand("spDeleteCompany", conn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Id", Id);
-
+            cmd.Parameters.Add(param);
             cmd.ExecuteNonQuery();
 
             conn.Close();
+
+            return (int)cmd.Parameters["@RetVal"].Value;
         }
     }
 }
