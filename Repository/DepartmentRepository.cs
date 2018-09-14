@@ -27,18 +27,24 @@ namespace CompanyStructuresWebAPI.Repository
         {
         }
 
-        void AddOrUpdateDepartment(Model.Department department)
+        int AddOrUpdateDepartment(Model.Department department)
         {
             SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
             conn.Open();
+
+            SqlParameter param = new SqlParameter("@RetVal", SqlDbType.Int);
+            param.Direction = ParameterDirection.ReturnValue;
 
             SqlCommand cmd = new SqlCommand("spCreateOrUpdateDepartment", conn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Id", department.Id);
             cmd.Parameters.AddWithValue("@DepartmentName", department.DepartmentName);
+            cmd.Parameters.Add(param);
             cmd.ExecuteNonQuery();
 
             conn.Close();
+
+            return (int)cmd.Parameters["@RetVal"].Value;
         }
 
         public List<Model.Department> GetDepartments()
@@ -89,32 +95,37 @@ namespace CompanyStructuresWebAPI.Repository
                 return null;
         }
 
-        public void Create(Model.Dto.DepartmentDto department)
+        public int Create(Model.Dto.DepartmentDto department)
         {
-            AddOrUpdateDepartment(new Model.Department()
+            return AddOrUpdateDepartment(new Model.Department()
             {
                 Id = -1,
                 DepartmentName = department.DepartmentName
             });
         }
 
-        public void Update(Model.Department department)
+        public int Update(Model.Department department)
         {
-            AddOrUpdateDepartment(department);
+            return AddOrUpdateDepartment(department);
         }
 
-        public void Delete(int Id)
+        public int Delete(int Id)
         {
             SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
             conn.Open();
 
+            SqlParameter param = new SqlParameter("@RetVal", SqlDbType.Int);
+            param.Direction = ParameterDirection.ReturnValue;
+
             SqlCommand cmd = new SqlCommand("spDeleteDepartment", conn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Id", Id);
-
+            cmd.Parameters.Add(param);
             cmd.ExecuteNonQuery();
 
             conn.Close();
+
+            return (int)cmd.Parameters["@RetVal"].Value;
         }
     }
 }
