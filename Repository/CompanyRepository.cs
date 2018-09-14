@@ -10,6 +10,20 @@ namespace CompanyStructuresWebAPI.Repository
 {
     public class CompanyRepository
     {
+        static CompanyRepository repo;
+
+        public static CompanyRepository GetInstance()
+        {
+            if (repo == null)
+                repo = new CompanyRepository();
+
+            return repo;
+        }
+
+        CompanyRepository()
+        {
+        }
+
         void AddOrUpdateCompany(Model.Company company)
         {
             SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");

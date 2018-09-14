@@ -12,7 +12,7 @@ namespace CompanyStructuresWebAPI.Controller
     {
         public IActionResult GetAll()
         {
-            Repository.CompanyRepository companyRepo = new Repository.CompanyRepository();
+            Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
 
             List<Model.Company> companies = companyRepo.GetCompanies();
 
@@ -30,7 +30,7 @@ namespace CompanyStructuresWebAPI.Controller
         [HttpGet("{Id}")]
         public IActionResult Get(int Id)
         {
-            Repository.CompanyRepository companyRepo = new Repository.CompanyRepository();
+            Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
             Model.Company company = companyRepo.GetCompanyById(Id);
 
             if (company != null)
@@ -48,12 +48,12 @@ namespace CompanyStructuresWebAPI.Controller
 
             else
             {
-                Repository.CompanyRepository companyRepo = new Repository.CompanyRepository();
+                Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
 
                 // Check for successful company construction
                 companyRepo.Create(company);
 
-                return Created("newcompany", company);
+                return Created("companies", company);
             }
         }
 
@@ -65,7 +65,7 @@ namespace CompanyStructuresWebAPI.Controller
 
             else
             {
-                Repository.CompanyRepository companyRepo = new Repository.CompanyRepository();
+                Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
 
                 // Check for success
                 companyRepo.Update(company);
@@ -77,7 +77,7 @@ namespace CompanyStructuresWebAPI.Controller
         [HttpDelete("{Id}")]
         public IActionResult Delete(int Id)
         {
-            Repository.CompanyRepository companyRepo = new Repository.CompanyRepository();
+            Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
 
             // Check for success
             companyRepo.Delete(Id);

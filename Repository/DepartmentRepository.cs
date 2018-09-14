@@ -12,6 +12,20 @@ namespace CompanyStructuresWebAPI.Repository
 {
     public class DepartmentRepository : Microsoft.AspNetCore.Mvc.Controller
     {
+        static DepartmentRepository repo;
+
+        public static DepartmentRepository GetInstance()
+        {
+            if (repo == null)
+                repo = new DepartmentRepository();
+
+            return repo;
+        }
+
+        DepartmentRepository()
+        {
+        }
+
         void AddOrUpdateDepartment(Model.Department department)
         {
             SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");

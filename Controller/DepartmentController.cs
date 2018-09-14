@@ -12,7 +12,7 @@ namespace CompanyStructuresWebAPI.Controller
     {
         public IActionResult GetAll()
         {
-            Repository.DepartmentRepository departmentRepo = new Repository.DepartmentRepository();
+            Repository.DepartmentRepository departmentRepo = Repository.DepartmentRepository.GetInstance();
 
             List<Model.Department> departments = departmentRepo.GetDepartments();
 
@@ -30,7 +30,7 @@ namespace CompanyStructuresWebAPI.Controller
         [HttpGet("{Id}")]
         public IActionResult Get(int Id)
         {
-            Repository.DepartmentRepository departmentRepo = new Repository.DepartmentRepository();
+            Repository.DepartmentRepository departmentRepo = Repository.DepartmentRepository.GetInstance();
             Model.Department department = departmentRepo.GetDepartmentById(Id);
 
             if (department != null)
@@ -48,12 +48,12 @@ namespace CompanyStructuresWebAPI.Controller
 
             else
             {
-                Repository.DepartmentRepository departmentRepo = new Repository.DepartmentRepository();
+                Repository.DepartmentRepository departmentRepo = Repository.DepartmentRepository.GetInstance();
 
                 // Check for successful company construction
                 departmentRepo.Create(department);
 
-                return Created("newdepartment", department);
+                return Created("departments", department);
             }
         }
 
@@ -65,7 +65,7 @@ namespace CompanyStructuresWebAPI.Controller
 
             else
             {
-                Repository.DepartmentRepository departmentRepo = new Repository.DepartmentRepository();
+                Repository.DepartmentRepository departmentRepo = Repository.DepartmentRepository.GetInstance();
 
                 // Check for success
                 departmentRepo.Update(department);
@@ -77,7 +77,7 @@ namespace CompanyStructuresWebAPI.Controller
         [HttpDelete("{Id}")]
         public IActionResult Delete(int Id)
         {
-            Repository.DepartmentRepository departmentRepo = new Repository.DepartmentRepository();
+            Repository.DepartmentRepository departmentRepo = Repository.DepartmentRepository.GetInstance();
 
             // Check for success
             departmentRepo.Delete(Id);
