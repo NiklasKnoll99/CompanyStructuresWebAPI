@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Data;
 
 using Microsoft.AspNetCore.Mvc;
+using Dapper;
 
 namespace CompanyStructuresWebAPI.Repository
 {
@@ -54,17 +55,19 @@ namespace CompanyStructuresWebAPI.Repository
             {
                 conn.Close();
 
-                List<Model.Department> departments = new List<Model.Department>();
+                List<Model.Department> departments = null;
 
-                for (short i = 0; i < table.Rows.Count; i++)
-                {
-                    departments.Add(new Model.Department()
-                    {
-                        Id = (int)table.Rows[i][0],
-                        DepartmentName = (string)table.Rows[i][1],
-                        CompanyName = (string)table.Rows[i][2]
-                    });
-                }
+                //for (short i = 0; i < table.Rows.Count; i++)
+                //{
+                //    departments.Add(new Model.Department()
+                //    {
+                //        Id = (int)table.Rows[i][0],
+                //        DepartmentName = (string)table.Rows[i][1],
+                //        CompanyName = (string)table.Rows[i][2]
+                //    });
+                //}
+
+                departments = conn.Query<Model.Department>(cmd.CommandText).ToList();
 
                 return departments;
             }
@@ -87,14 +90,17 @@ namespace CompanyStructuresWebAPI.Repository
             {
                 conn.Close();
 
-                Model.Department department = new Model.Department()
-                {
-                    Id = (int)table.Rows[0][0],
-                    DepartmentName = (string)table.Rows[0][1],
-                    CompanyName = (string)table.Rows[0][2]
-                };
+                //Model.Department department = new Model.Department()
+                //{
+                //    Id = (int)table.Rows[0][0],
+                //    DepartmentName = (string)table.Rows[0][1],
+                //    CompanyName = (string)table.Rows[0][2]
+                //};
 
-                return department;
+                DynamicParameters dParams = new DynamicParameters();
+                dParams.Add("@Id", Id);
+
+                return conn.QueryFirstOrDefault<Model.Department>(cmd.CommandText, dParams);
             }
 
             else

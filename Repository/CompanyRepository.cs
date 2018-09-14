@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Data;
 
+using Dapper;
+
 namespace CompanyStructuresWebAPI.Repository
 {
     public class CompanyRepository
@@ -52,22 +54,8 @@ namespace CompanyStructuresWebAPI.Repository
             {
                 conn.Close();
 
-                List<Model.Company> companies = new List<Model.Company>();
-
-                for (short i = 0; i < table.Rows.Count; i++)
-                {
-                    companies.Add(new Model.Company()
-                    {
-                        Id = (int)table.Rows[i][0],
-                        CompanyName = (string)table.Rows[i][1],
-                        CountryCode = (string)table.Rows[i][2],
-                        ProvinceName = (string)table.Rows[i][3],
-                        PostCode = (string)table.Rows[i][4],
-                        CityName = (string)table.Rows[i][5],
-                        Street = (string)table.Rows[i][6],
-                        HouseNumber = (short)table.Rows[i][7]
-                    });
-                }
+                List<Model.Company> companies = null;
+                companies = conn.Query<Model.Company>(cmd.CommandText).ToList();
 
                 return companies;
             }
@@ -90,19 +78,10 @@ namespace CompanyStructuresWebAPI.Repository
             {
                 conn.Close();
 
-                Model.Company company = new Model.Company()
-                {
-                    Id = (int)table.Rows[0][0],
-                    CompanyName = (string)table.Rows[0][1],
-                    CountryCode = (string)table.Rows[0][2],
-                    ProvinceName = (string)table.Rows[0][3],
-                    PostCode = (string)table.Rows[0][4],
-                    CityName = (string)table.Rows[0][5],
-                    Street = (string)table.Rows[0][6],
-                    HouseNumber = (short)table.Rows[0][7]
-                };
+                DynamicParameters dParams = new DynamicParameters();
+                dParams.Add("@Id", Id);
 
-                return company;
+                return conn.QueryFirstOrDefault<Model.Company>(cmd.CommandText, dParams);
             }
 
             else
