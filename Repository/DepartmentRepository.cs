@@ -12,6 +12,18 @@ namespace CompanyStructuresWebAPI.Repository
 {
     public class DepartmentRepository : Microsoft.AspNetCore.Mvc.Controller
     {
+        void AddOrUpdateDepartment(Model.Department department)
+        {
+            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
+            conn.Open();
+
+            SqlCommand cmd = new SqlCommand("spCreateOrUpdateDepartment", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Id", department.Id);
+            cmd.Parameters.AddWithValue("@DepartmentName", department.DepartmentName);
+            cmd.ExecuteNonQuery();
+        }
+
         public List<Model.Department> GetDepartments()
         {
             SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
@@ -73,16 +85,18 @@ namespace CompanyStructuresWebAPI.Repository
                 return null;
         }
 
-        public void AddOrUpdateDepartment(Model.Department department)
+        public void Create(Model.Dto.DepartmentDto department)
         {
-            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
-            conn.Open();
+            AddOrUpdateDepartment(new Model.Department()
+            {
+                Id = -1,
+                DepartmentName = department.DepartmentName
+            });
+        }
 
-            SqlCommand cmd = new SqlCommand("spCreateOrUpdateDepartment", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@Id", department.Id);
-            cmd.Parameters.AddWithValue("@DepartmentName", department.DepartmentName);
-            cmd.ExecuteNonQuery();
+        public void Update(Model.Department department)
+        {
+            AddOrUpdateDepartment(department);
         }
     }
 }

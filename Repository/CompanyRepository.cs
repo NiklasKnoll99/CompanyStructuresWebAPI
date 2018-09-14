@@ -10,6 +10,18 @@ namespace CompanyStructuresWebAPI.Repository
 {
     public class CompanyRepository
     {
+        void AddOrUpdateCompany(Model.Company company)
+        {
+            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
+            conn.Open();
+
+            SqlCommand cmd = new SqlCommand("spCreateOrUpdateCompany", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Id", company.Id);
+            cmd.Parameters.AddWithValue("@CompanyName", company.CompanyName);
+            cmd.ExecuteNonQuery();
+        }
+
         public List<Model.Company> GetCompanies()
         {
             SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
@@ -81,16 +93,18 @@ namespace CompanyStructuresWebAPI.Repository
                 return null;
         }
 
-        public void AddOrUpdateCompany(Model.Company company)
+        public void Create(Model.Dto.CompanyDto company)
         {
-            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
-            conn.Open();
+            AddOrUpdateCompany(new Model.Company()
+            {
+                Id = -1,
+                CompanyName = company.CompanyName
+            });
+        }
 
-            SqlCommand cmd = new SqlCommand("spCreateOrUpdateCompany", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@Id", company.Id);
-            cmd.Parameters.AddWithValue("@CompanyName", company.CompanyName);
-            cmd.ExecuteNonQuery();
+        public void Update(Model.Company company)
+        {
+            AddOrUpdateCompany(company);
         }
     }
 }

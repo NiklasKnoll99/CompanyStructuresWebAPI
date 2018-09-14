@@ -39,5 +39,22 @@ namespace CompanyStructuresWebAPI.Controller
             else
                 return NoContent();
         }
+
+        [HttpPost("newcompany")]
+        public IActionResult Post([FromBody]Model.Dto.CompanyDto company)
+        {
+            if (company == null)
+                return BadRequest();
+
+            else
+            {
+                Repository.CompanyRepository companyRepo = new Repository.CompanyRepository();
+
+                // Check for successful company construction
+                companyRepo.Create(company);
+
+                return Created("newcompany", company);
+            }
+        }
     }
 }

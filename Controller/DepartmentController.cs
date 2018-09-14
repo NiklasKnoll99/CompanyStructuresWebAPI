@@ -39,5 +39,22 @@ namespace CompanyStructuresWebAPI.Controller
             else
                 return NoContent();
         }
+
+        [HttpPost("newdepartment")]
+        public IActionResult Post([FromBody] Model.Dto.DepartmentDto department)
+        {
+            if (department == null)
+                return BadRequest();
+
+            else
+            {
+                Repository.DepartmentRepository departmentRepo = new Repository.DepartmentRepository();
+
+                // Check for successful company construction
+                departmentRepo.Create(department);
+
+                return Created("newdepartment", department);
+            }
+        }
     }
 }

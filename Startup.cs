@@ -31,15 +31,6 @@ namespace CompanyStructuresWebAPI
             app.Run(async (context) =>
             {
                 await context.Response.WriteAsync("Hello World!");
-
-                //TEST
-                Repository.DepartmentRepository repo = new Repository.DepartmentRepository();
-                repo.AddOrUpdateDepartment(new Model.Department()
-                {
-                    Id = 3,
-                    DepartmentName = "CreativeTeam"
-                });
-                int x = 0;
             });
         }
     }
