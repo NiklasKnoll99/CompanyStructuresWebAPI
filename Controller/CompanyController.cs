@@ -56,5 +56,16 @@ namespace CompanyStructuresWebAPI.Controller
                 return Created("newcompany", company);
             }
         }
+
+        [HttpDelete("delete/{Id}")]
+        public IActionResult Delete(int Id)
+        {
+            Repository.CompanyRepository companyRepo = new Repository.CompanyRepository();
+
+            // Check for success
+            companyRepo.Delete(Id);
+
+            return Ok();
+        }
     }
 }

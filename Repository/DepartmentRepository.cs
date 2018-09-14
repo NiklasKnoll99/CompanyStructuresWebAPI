@@ -22,6 +22,8 @@ namespace CompanyStructuresWebAPI.Repository
             cmd.Parameters.AddWithValue("@Id", department.Id);
             cmd.Parameters.AddWithValue("@DepartmentName", department.DepartmentName);
             cmd.ExecuteNonQuery();
+
+            conn.Close();
         }
 
         public List<Model.Department> GetDepartments()
@@ -97,6 +99,20 @@ namespace CompanyStructuresWebAPI.Repository
         public void Update(Model.Department department)
         {
             AddOrUpdateDepartment(department);
+        }
+
+        public void Delete(int Id)
+        {
+            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
+            conn.Open();
+
+            SqlCommand cmd = new SqlCommand("spDeleteDepartment", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Id", Id);
+
+            cmd.ExecuteNonQuery();
+
+            conn.Close();
         }
     }
 }

@@ -20,6 +20,8 @@ namespace CompanyStructuresWebAPI.Repository
             cmd.Parameters.AddWithValue("@Id", company.Id);
             cmd.Parameters.AddWithValue("@CompanyName", company.CompanyName);
             cmd.ExecuteNonQuery();
+
+            conn.Close();
         }
 
         public List<Model.Company> GetCompanies()
@@ -105,6 +107,20 @@ namespace CompanyStructuresWebAPI.Repository
         public void Update(Model.Company company)
         {
             AddOrUpdateCompany(company);
+        }
+
+        public void Delete(int Id)
+        {
+            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
+            conn.Open();
+
+            SqlCommand cmd = new SqlCommand("spDeleteCompany", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Id", Id);
+
+            cmd.ExecuteNonQuery();
+
+            conn.Close();
         }
     }
 }
