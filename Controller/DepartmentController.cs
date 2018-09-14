@@ -40,7 +40,7 @@ namespace CompanyStructuresWebAPI.Controller
                 return NoContent();
         }
 
-        [HttpPost("newdepartment")]
+        [HttpPost]
         public IActionResult Post([FromBody] Model.Dto.DepartmentDto department)
         {
             if (department == null)
@@ -60,7 +60,7 @@ namespace CompanyStructuresWebAPI.Controller
         [HttpPut]
         public IActionResult Put([FromBody] Model.Department department)
         {
-            if (department == null)
+            if ((department == null) || (department.DepartmentName == null))
                 return BadRequest();
 
             else
@@ -74,7 +74,7 @@ namespace CompanyStructuresWebAPI.Controller
             }
         }
 
-        [HttpDelete("delete/{Id}")]
+        [HttpDelete("{Id}")]
         public IActionResult Delete(int Id)
         {
             Repository.DepartmentRepository departmentRepo = new Repository.DepartmentRepository();

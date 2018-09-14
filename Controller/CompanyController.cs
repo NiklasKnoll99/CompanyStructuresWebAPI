@@ -40,7 +40,7 @@ namespace CompanyStructuresWebAPI.Controller
                 return NoContent();
         }
 
-        [HttpPost("newcompany")]
+        [HttpPost]
         public IActionResult Post([FromBody]Model.Dto.CompanyDto company)
         {
             if (company == null)
@@ -60,7 +60,7 @@ namespace CompanyStructuresWebAPI.Controller
         [HttpPut]
         public IActionResult Put([FromBody] Model.Company company)
         {
-            if (company == null)
+            if ((company == null) || (company.CompanyName == null))
                 return BadRequest();
 
             else
@@ -74,7 +74,7 @@ namespace CompanyStructuresWebAPI.Controller
             }
         }
 
-        [HttpDelete("delete/{Id}")]
+        [HttpDelete("{Id}")]
         public IActionResult Delete(int Id)
         {
             Repository.CompanyRepository companyRepo = new Repository.CompanyRepository();
