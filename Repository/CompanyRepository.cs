@@ -5,210 +5,139 @@ using System.Threading.Tasks;
 
 using System.Data.SqlClient;
 using System.Data;
-
 using Dapper;
+using CompanyStructuresWebAPI.Interface;
 
 namespace CompanyStructuresWebAPI.Repository
 {
-    public class CompanyRepository
+    public class CompanyRepository : ICompanyRepository
     {
-        static CompanyRepository repo;
+        IDbContext _dbContext;
 
-        public static CompanyRepository GetInstance()
+        public CompanyRepository(IDbContext dbContext)
         {
-            if (repo == null)
-                repo = new CompanyRepository();
-
-            return repo;
+            _dbContext = dbContext;
         }
 
-        CompanyRepository()
-        {
-        }
-
-        int AddOrUpdateCompany(Model.Company company)
-        {
-            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
+        //int AddOrUpdateCompany(Model.Company company)
+        //{
+        //    SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
             
-            try
-            {
-                conn.Open();
-            }
+        //    try
+        //    {
+        //        conn.Open();
+        //    }
 
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
 
-            SqlParameter param = new SqlParameter("@RetVal", SqlDbType.Int);
-            param.Direction = ParameterDirection.ReturnValue;
+        //    SqlParameter param = new SqlParameter("@RetVal", SqlDbType.Int);
+        //    param.Direction = ParameterDirection.ReturnValue;
 
-            SqlCommand cmd = new SqlCommand("spCreateOrUpdateCompany", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@Id", company.Id);
-            cmd.Parameters.AddWithValue("@CompanyName", company.CompanyName);
-            cmd.Parameters.Add(param);
+        //    SqlCommand cmd = new SqlCommand("spCreateOrUpdateCompany", conn);
+        //    cmd.CommandType = CommandType.StoredProcedure;
+        //    cmd.Parameters.AddWithValue("@Id", company.Id);
+        //    cmd.Parameters.AddWithValue("@CompanyName", company.CompanyName);
+        //    cmd.Parameters.Add(param);
 
-            try
-            {
-                cmd.ExecuteNonQuery();
-                conn.Close();
-            }
+        //    try
+        //    {
+        //        cmd.ExecuteNonQuery();
+        //        conn.Close();
+        //    }
 
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
 
-            return (int)cmd.Parameters["@RetVal"].Value;
-        }
+        //    return (int)cmd.Parameters["@RetVal"].Value;
+        //}
 
         public List<Model.Company> GetCompanies()
         {
-            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
-            
-            try
-            {
-                conn.Open();
-            }
+            var conn = _dbContext.GetConnection();
+            string cmd = "SELECT Id, CompanyName, CountryCode, ProvinceName, PostCode, CityName, Street, HouseNumber FROM viCompany";
+            List<Model.Company> companies = conn.Query<Model.Company>(cmd).ToList();
 
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            SqlCommand cmd = new SqlCommand("SELECT Id, CompanyName, CountryCode, ProvinceName, PostCode, CityName, Street, HouseNumber FROM viCompany", conn);
-            DataTable table = new DataTable();
-
-            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-
-            try
-            {
-                if (adapter.Fill(table) > 0)
-                {
-                    conn.Close();
-
-                    List<Model.Company> companies = null;
-                    companies = conn.Query<Model.Company>(cmd.CommandText).ToList();
-
-                    return companies;
-                }
-
-                else
-                    return null;
-            }
-
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return companies;
         }
 
         public Model.Company GetCompanyById(int Id)
         {
-            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
-            
-            try
-            {
-                conn.Open();
-            }
+            var conn = _dbContext.GetConnection();
+            string cmd = "SELECT Id, CompanyName, CountryCode, ProvinceName, PostCode, CityName, Street, HouseNumber FROM viCompany WHERE Id = " + Id;
+            Model.Company company = conn.QueryFirstOrDefault<Model.Company>(cmd);
 
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            SqlCommand cmd = new SqlCommand("SELECT Id, CompanyName, CountryCode, ProvinceName, PostCode, CityName, Street, HouseNumber FROM viCompany WHERE Id = " + Id.ToString(), conn);
-            DataTable table = new DataTable();
-
-            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-
-            try
-            {
-                if (adapter.Fill(table) > 0)
-                {
-                    conn.Close();
-
-                    DynamicParameters dParams = new DynamicParameters();
-                    dParams.Add("@Id", Id);
-
-                    return conn.QueryFirstOrDefault<Model.Company>(cmd.CommandText, dParams);
-                }
-
-                else
-                    return null;
-            }
-
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return company;
         }
 
-        public int Create(Model.Dto.CompanyDto company)
-        {
-            try
-            {
-                return AddOrUpdateCompany(new Model.Company()
-                {
-                    Id = -1,
-                    CompanyName = company.CompanyName
-                });
-            }
+        //public int Create(Model.Dto.CompanyDto company)
+        //{
+        //    try
+        //    {
+        //        return AddOrUpdateCompany(new Model.Company()
+        //        {
+        //            Id = -1,
+        //            CompanyName = company.CompanyName
+        //        });
+        //    }
 
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
-        public int Update(Model.Company company)
-        {
-            try
-            {
-                return AddOrUpdateCompany(company);
-            }
+        //public int Update(Model.Company company)
+        //{
+        //    try
+        //    {
+        //        return AddOrUpdateCompany(company);
+        //    }
 
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
-        public int Delete(int Id)
-        {
-            SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
-            
-            try
-            {
-                conn.Open();
-            }
+        //public int Delete(int Id)
+        //{
+        //    SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
 
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+        //    try
+        //    {
+        //        conn.Open();
+        //    }
 
-            SqlParameter param = new SqlParameter("@RetVal", SqlDbType.Int);
-            param.Direction = ParameterDirection.ReturnValue;
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
 
-            SqlCommand cmd = new SqlCommand("spDeleteCompany", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@Id", Id);
-            cmd.Parameters.Add(param);
+        //    SqlParameter param = new SqlParameter("@RetVal", SqlDbType.Int);
+        //    param.Direction = ParameterDirection.ReturnValue;
 
-            try
-            {
-                cmd.ExecuteNonQuery();
-                conn.Close();
-            }
+        //    SqlCommand cmd = new SqlCommand("spDeleteCompany", conn);
+        //    cmd.CommandType = CommandType.StoredProcedure;
+        //    cmd.Parameters.AddWithValue("@Id", Id);
+        //    cmd.Parameters.Add(param);
 
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+        //    try
+        //    {
+        //        cmd.ExecuteNonQuery();
+        //        conn.Close();
+        //    }
 
-            return (int)cmd.Parameters["@RetVal"].Value;
-        }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+
+        //    return (int)cmd.Parameters["@RetVal"].Value;
+        //}
     }
 }

@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
+using CompanyStructuresWebAPI.Interface;
+using CompanyStructuresWebAPI.Helper;
+using CompanyStructuresWebAPI.Repository;
+
 namespace CompanyStructuresWebAPI
 {
     public class Startup
@@ -16,6 +20,10 @@ namespace CompanyStructuresWebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            services.AddSingleton<IDbContext, DbContext>();
+            services.AddScoped<ICompanyRepository, CompanyRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

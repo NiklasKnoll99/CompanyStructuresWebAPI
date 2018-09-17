@@ -4,17 +4,23 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
+using CompanyStructuresWebAPI.Repository;
 
-namespace CompanyStructuresWebAPI.Controller
+namespace CompanyStructuresWebAPI.Interface
 {
     [Route("companies")]
     public class CompanyController : Microsoft.AspNetCore.Mvc.Controller
     {
+        readonly ICompanyRepository _companyRepo;
+
+        public CompanyController(ICompanyRepository companyRepo)
+        {
+            _companyRepo = companyRepo;
+        }
+
         public IActionResult GetAll()
         {
-            Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
-
-            List<Model.Company> companies = companyRepo.GetCompanies();
+            List<Model.Company> companies = _companyRepo.GetCompanies();
 
             if (companies != null)
             {
@@ -30,8 +36,7 @@ namespace CompanyStructuresWebAPI.Controller
         [HttpGet("{Id}")]
         public IActionResult Get(int Id)
         {
-            Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
-            Model.Company company = companyRepo.GetCompanyById(Id);
+            Model.Company company = _companyRepo.GetCompanyById(Id);
 
             if (company != null)
                 return Ok(company);
@@ -40,49 +45,49 @@ namespace CompanyStructuresWebAPI.Controller
                 return NoContent();
         }
 
-        [HttpPost]
-        public IActionResult Post([FromBody]Model.Dto.CompanyDto company)
-        {
-            if (company == null)
-                return BadRequest();
+        //[HttpPost]
+        //public IActionResult Post([FromBody]Model.Dto.CompanyDto company)
+        //{
+        //    if (company == null)
+        //        return BadRequest();
 
-            else
-            {
-                Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
+        //    else
+        //    {
+        //        Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
 
-                // Exception handling
-                companyRepo.Create(company);
+        //        // Exception handling
+        //        companyRepo.Create(company);
 
-                return Created("companies", company);
-            }
-        }
+        //        return Created("companies", company);
+        //    }
+        //}
 
-        [HttpPut]
-        public IActionResult Put([FromBody] Model.Company company)
-        {
-            if ((company == null) || (company.CompanyName == null))
-                return BadRequest();
+        //[HttpPut]
+        //public IActionResult Put([FromBody] Model.Company company)
+        //{
+        //    if ((company == null) || (company.CompanyName == null))
+        //        return BadRequest();
 
-            else
-            {
-                Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
+        //    else
+        //    {
+        //        Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
 
-                // Exception handling
-                companyRepo.Update(company);
+        //        // Exception handling
+        //        companyRepo.Update(company);
 
-                return Ok();
-            }
-        }
+        //        return Ok();
+        //    }
+        //}
 
-        [HttpDelete("{Id}")]
-        public IActionResult Delete(int Id)
-        {
-            Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
+        //[HttpDelete("{Id}")]
+        //public IActionResult Delete(int Id)
+        //{
+        //    Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
 
-            // Exception handling
-            companyRepo.Delete(Id);
+        //    // Exception handling
+        //    companyRepo.Delete(Id);
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
     }
 }
