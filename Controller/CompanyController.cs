@@ -45,49 +45,45 @@ namespace CompanyStructuresWebAPI.Interface
                 return NoContent();
         }
 
-        //[HttpPost]
-        //public IActionResult Post([FromBody]Model.Dto.CompanyDto company)
-        //{
-        //    if (company == null)
-        //        return BadRequest();
+        [HttpPost]
+        public IActionResult Post([FromBody]Model.Dto.CompanyDto company)
+        {
+            if (company == null)
+                return BadRequest();
 
-        //    else
-        //    {
-        //        Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
+            else
+            {
+                // Exception handling
+                _companyRepo.Create(company);
 
-        //        // Exception handling
-        //        companyRepo.Create(company);
+                return Created("companies", company);
+            }
+        }
 
-        //        return Created("companies", company);
-        //    }
-        //}
+        [HttpPut]
+        public IActionResult Put([FromBody] Model.Company company)
+        {
+            if ((company == null) || (company.CompanyName == null))
+                return BadRequest();
 
-        //[HttpPut]
-        //public IActionResult Put([FromBody] Model.Company company)
-        //{
-        //    if ((company == null) || (company.CompanyName == null))
-        //        return BadRequest();
+            else
+            {
+                // Exception handling
+                _companyRepo.Update(company);
 
-        //    else
-        //    {
-        //        Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
+                return Ok();
+            }
+        }
 
-        //        // Exception handling
-        //        companyRepo.Update(company);
+        [HttpDelete("{Id}")]
+        public IActionResult Delete(int Id)
+        {
+            // Exception handling
+            if (_companyRepo.Delete(Id) != -1)
+                return Ok();
 
-        //        return Ok();
-        //    }
-        //}
-
-        //[HttpDelete("{Id}")]
-        //public IActionResult Delete(int Id)
-        //{
-        //    Repository.CompanyRepository companyRepo = Repository.CompanyRepository.GetInstance();
-
-        //    // Exception handling
-        //    companyRepo.Delete(Id);
-
-        //    return Ok();
-        //}
+            else
+                return NoContent();
+        }
     }
 }
