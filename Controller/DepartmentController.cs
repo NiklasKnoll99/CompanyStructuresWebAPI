@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
 using CompanyStructuresWebAPI.Interface;
+using CompanyStructuresWebAPI.Helper;
 
 namespace CompanyStructuresWebAPI.Controller
 {
@@ -49,42 +50,60 @@ namespace CompanyStructuresWebAPI.Controller
         [HttpPost]
         public IActionResult Post([FromBody] Model.Dto.DepartmentDto department)
         {
-            if (department == null)
-                return BadRequest();
+            if (Authenticator.isAuthenticated(Request.Headers["Authorization"]))
+            {
+                if (department == null)
+                    return BadRequest();
+
+                else
+                {
+                    // Exception handling
+                    _departmentRepo.Create(department);
+
+                    return Created("departments", department);
+                }
+            }
 
             else
-            { 
-                // Exception handling
-                _departmentRepo.Create(department);
-
-                return Created("departments", department);
-            }
+                return Unauthorized();
         }
 
         [HttpPut]
         public IActionResult Put([FromBody] Model.Department department)
         {
-            if ((department == null) || (department.DepartmentName == null))
-                return BadRequest();
+            if (Authenticator.isAuthenticated(Request.Headers["Authorization"]))
+            {
+                if ((department == null) || (department.DepartmentName == null))
+                    return BadRequest();
+
+                else
+                {
+                    // Exception handling
+                    _departmentRepo.Update(department);
+
+                    return Ok();
+                }
+            }
 
             else
-            {
-                // Exception handling
-                _departmentRepo.Update(department);
-
-                return Ok();
-            }
+                return Unauthorized();
         }
 
         [HttpDelete("{Id}")]
         public IActionResult Delete(int Id)
         {
-            // Exception handling
-            if (_departmentRepo.Delete(Id) != -1)
-                return Ok();
+            if (Authenticator.isAuthenticated(Request.Headers["Authorization"]))
+            {
+                // Exception handling
+                if (_departmentRepo.Delete(Id) != -1)
+                    return Ok();
+
+                else
+                    return NoContent();
+            }
 
             else
-                return NoContent();
+                return Unauthorized();
         }
     }
 }

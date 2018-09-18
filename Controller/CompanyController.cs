@@ -20,6 +20,7 @@ namespace CompanyStructuresWebAPI.Interface
             _companyRepo = companyRepo;
         }
 
+        [HttpGet]
         public IActionResult GetAll()
         {
             List<Model.Company> companies = _companyRepo.GetCompanies();
