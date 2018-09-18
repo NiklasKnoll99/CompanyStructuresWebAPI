@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Data;
 using Dapper;
 using CompanyStructuresWebAPI.Interface;
+using CompanyStructuresWebAPI.APIException;
 
 namespace CompanyStructuresWebAPI.Repository
 {
@@ -21,7 +22,18 @@ namespace CompanyStructuresWebAPI.Repository
 
         int AddOrUpdateCompany(Model.Company company)
         {
-            var conn = _dbContext.GetConnection();
+            IDbConnection conn = null;
+
+            try
+            {
+                conn = _dbContext.GetConnection();
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+            }
+
             int retVal = 0;
 
             DynamicParameters dParams = new DynamicParameters();
@@ -29,7 +41,15 @@ namespace CompanyStructuresWebAPI.Repository
             dParams.Add("@CompanyName", company.CompanyName);
             dParams.Add("@RetVal", retVal, DbType.Int32, ParameterDirection.ReturnValue);
 
-            conn.Execute("spCreateOrUpdateCompany", dParams, null, null, CommandType.StoredProcedure);
+            try
+            {
+                conn.Execute("spCreateOrUpdateCompany", dParams, null, null, CommandType.StoredProcedure);
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.SPROCEDURE_EXECUTION_EXCEPTION, ex.Message);
+            }
 
             retVal = dParams.Get<int>("@RetVal");
 
@@ -38,46 +58,123 @@ namespace CompanyStructuresWebAPI.Repository
 
         public List<Model.Company> GetCompanies()
         {
-            var conn = _dbContext.GetConnection();
+            IDbConnection conn = null;
+
+            try
+            {
+                conn = _dbContext.GetConnection();
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+            }
+
             string cmd = "SELECT Id, CompanyName, CountryCode, ProvinceName, PostCode, CityName, Street, HouseNumber FROM viCompany";
-            List<Model.Company> companies = conn.Query<Model.Company>(cmd).ToList();
+            List<Model.Company> companies = null;
+
+            try
+            {
+                companies = conn.Query<Model.Company>(cmd).ToList();
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.READ_EXCEPTION, ex.Message);
+            }
 
             return companies;
         }
 
         public Model.Company GetCompanyById(int Id)
         {
-            var conn = _dbContext.GetConnection();
+            IDbConnection conn = null;
+
+            try
+            {
+                conn = _dbContext.GetConnection();
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+            }
+
             string cmd = "SELECT Id, CompanyName, CountryCode, ProvinceName, PostCode, CityName, Street, HouseNumber FROM viCompany WHERE Id = " + Id;
-            Model.Company company = conn.QueryFirstOrDefault<Model.Company>(cmd);
+            Model.Company company = null;
+
+            try
+            {
+                company = conn.QueryFirstOrDefault<Model.Company>(cmd);
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.READ_EXCEPTION, ex.Message);
+            }
 
             return company;
         }
 
         public int Create(Model.Dto.CompanyDto company)
         {
-            return AddOrUpdateCompany(new Model.Company()
+            try
             {
-                Id = -1,
-                CompanyName = company.CompanyName
-            });
+                return AddOrUpdateCompany(new Model.Company()
+                {
+                    Id = -1,
+                    CompanyName = company.CompanyName
+                });
+            }
+
+            catch (RepositoryException rEx)
+            {
+                throw rEx;
+            }
         }
 
         public int Update(Model.Company company)
         {
-            return AddOrUpdateCompany(company);
+            try
+            {
+                return AddOrUpdateCompany(company);
+            }
+
+            catch (RepositoryException rEx)
+            {
+                throw rEx;
+            }
         }
 
         public int Delete(int Id)
         {
-            var conn = _dbContext.GetConnection();
+            IDbConnection conn = null;
+
+            try
+            {
+                conn = _dbContext.GetConnection();
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+            }
+
             int retVal = 0;
 
             DynamicParameters dParams = new DynamicParameters();
             dParams.Add("@Id", Id);
             dParams.Add("@RetVal", null, DbType.Int32, ParameterDirection.ReturnValue, null);
 
-            conn.Execute("spDeleteCompany", dParams, null, null, CommandType.StoredProcedure);
+            try
+            {
+                conn.Execute("spDeleteCompany", dParams, null, null, CommandType.StoredProcedure);
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.SPROCEDURE_EXECUTION_EXCEPTION, ex.Message);
+            }
 
             retVal = dParams.Get<int>("@RetVal");
 

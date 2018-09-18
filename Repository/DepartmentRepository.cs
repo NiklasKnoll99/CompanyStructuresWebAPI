@@ -8,6 +8,7 @@ using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Dapper;
 using CompanyStructuresWebAPI.Interface;
+using CompanyStructuresWebAPI.APIException;
 
 namespace CompanyStructuresWebAPI.Repository
 {
@@ -22,7 +23,18 @@ namespace CompanyStructuresWebAPI.Repository
 
         int AddOrUpdateDepartment(Model.Department department)
         {
-            var conn = _dbContext.GetConnection();
+            IDbConnection conn = null;
+
+            try
+            {
+                conn = _dbContext.GetConnection();
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+            }
+
             int retVal = 0;
 
             DynamicParameters dParams = new DynamicParameters();
@@ -30,7 +42,15 @@ namespace CompanyStructuresWebAPI.Repository
             dParams.Add("@DepartmentName", department.DepartmentName);
             dParams.Add("@RetVal", retVal, DbType.Int32, ParameterDirection.ReturnValue);
 
-            conn.Execute("spCreateOrUpdateDepartment", dParams, null, null, CommandType.StoredProcedure);
+            try
+            {
+                conn.Execute("spCreateOrUpdateDepartment", dParams, null, null, CommandType.StoredProcedure);
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.SPROCEDURE_EXECUTION_EXCEPTION, ex.Message);
+            }
 
             retVal = dParams.Get<int>("@RetVal");
 
@@ -39,46 +59,123 @@ namespace CompanyStructuresWebAPI.Repository
 
         public List<Model.Department> GetDepartments()
         {
-            var conn = _dbContext.GetConnection();
+            IDbConnection conn = null;
+
+            try
+            {
+                conn = _dbContext.GetConnection();
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+            }
+
             string cmd = "SELECT Id, DepartmentName, CompanyName FROM viDepartment";
-            List<Model.Department> departments = conn.Query<Model.Department>(cmd).ToList();
+            List<Model.Department> departments = null;
+
+            try
+            {
+                departments = conn.Query<Model.Department>(cmd).ToList();
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.READ_EXCEPTION, ex.Message);
+            }
 
             return departments;
         }
 
         public Model.Department GetDepartmentById(int Id)
         {
-            var conn = _dbContext.GetConnection();
+            IDbConnection conn = null;
+
+            try
+            {
+                conn = _dbContext.GetConnection();
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+            }
+
             string cmd = "SELECT Id, DepartmentName, CompanyName FROM viDepartment WHERE Id = " + Id.ToString();
-            Model.Department department = conn.QueryFirstOrDefault<Model.Department>(cmd);
+            Model.Department department = null;
+
+            try
+            {
+                department = conn.QueryFirstOrDefault<Model.Department>(cmd);
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.READ_EXCEPTION, ex.Message);
+            }
 
             return department;
         }
 
         public int Create(Model.Dto.DepartmentDto department)
         {
-            return AddOrUpdateDepartment(new Model.Department()
+            try
             {
-                Id = -1,
-                DepartmentName = department.DepartmentName
-            });
+                return AddOrUpdateDepartment(new Model.Department()
+                {
+                    Id = -1,
+                    DepartmentName = department.DepartmentName
+                });
+            }
+
+            catch (RepositoryException rEx)
+            {
+                throw rEx;
+            }
         }
 
         public int Update(Model.Department department)
         {
-            return AddOrUpdateDepartment(department);
+            try
+            {
+                return AddOrUpdateDepartment(department);
+            }
+
+            catch (RepositoryException rEx)
+            {
+                throw rEx;
+            }
         }
 
         public int Delete(int Id)
         {
-            var conn = _dbContext.GetConnection();
+            IDbConnection conn = null;
+
+            try
+            {
+                conn = _dbContext.GetConnection();
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+            }
+
             int retVal = 0;
 
             DynamicParameters dParams = new DynamicParameters();
             dParams.Add("@Id", Id);
             dParams.Add("@RetVal", retVal, DbType.Int32, ParameterDirection.ReturnValue);
 
-            conn.Execute("spDeleteDepartment", dParams, null, null, CommandType.StoredProcedure);
+            try
+            {
+                conn.Execute("spDeleteDepartment", dParams, null, null, CommandType.StoredProcedure);
+            }
+
+            catch (Exception ex)
+            {
+                throw new RepositoryException(RepositoryException.Type.SPROCEDURE_EXECUTION_EXCEPTION, ex.Message);
+            }
 
             retVal = dParams.Get<int>("@RetVal");
 

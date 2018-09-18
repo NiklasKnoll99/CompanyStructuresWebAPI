@@ -82,7 +82,7 @@ namespace CompanyStructuresWebAPI.Interface
                     // Exception handling
                     _companyRepo.Update(company);
 
-                    return Created("companies", company);
+                    return Ok();
                 }
             }
 

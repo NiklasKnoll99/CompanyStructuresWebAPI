@@ -14,7 +14,17 @@ namespace CompanyStructuresWebAPI.Helper
         public IDbConnection GetConnection()
         {
             SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;"); // Read it from appsettings
-            conn.Open();
+            
+            try
+            {
+                conn.Open();
+            }
+
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
             return conn;
         }
     }
