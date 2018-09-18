@@ -20,42 +20,22 @@ namespace CompanyStructuresWebAPI.Repository
             _dbContext = dbContext;
         }
 
-        //int AddOrUpdateDepartment(Model.Department department)
-        //{
-        //    SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
-            
-        //    try
-        //    {
-        //        conn.Open();
-        //    }
+        int AddOrUpdateDepartment(Model.Department department)
+        {
+            var conn = _dbContext.GetConnection();
+            int retVal = 0;
 
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
+            DynamicParameters dParams = new DynamicParameters();
+            dParams.Add("@Id", department.Id);
+            dParams.Add("@DepartmentName", department.DepartmentName);
+            dParams.Add("@RetVal", retVal, DbType.Int32, ParameterDirection.ReturnValue);
 
-        //    SqlParameter param = new SqlParameter("@RetVal", SqlDbType.Int);
-        //    param.Direction = ParameterDirection.ReturnValue;
+            conn.Execute("spCreateOrUpdateDepartment", dParams, null, null, CommandType.StoredProcedure);
 
-        //    SqlCommand cmd = new SqlCommand("spCreateOrUpdateDepartment", conn);
-        //    cmd.CommandType = CommandType.StoredProcedure;
-        //    cmd.Parameters.AddWithValue("@Id", department.Id);
-        //    cmd.Parameters.AddWithValue("@DepartmentName", department.DepartmentName);
-        //    cmd.Parameters.Add(param);
-            
-        //    try
-        //    {
-        //        cmd.ExecuteNonQuery();
-        //        conn.Close();
-        //    }
+            retVal = dParams.Get<int>("@RetVal");
 
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-
-        //    return (int)cmd.Parameters["@RetVal"].Value;
-        //}
+            return retVal;
+        }
 
         public List<Model.Department> GetDepartments()
         {
@@ -75,70 +55,34 @@ namespace CompanyStructuresWebAPI.Repository
             return department;
         }
 
-        //public int Create(Model.Dto.DepartmentDto department)
-        //{
-        //    try
-        //    {
-        //        return AddOrUpdateDepartment(new Model.Department()
-        //        {
-        //            Id = -1,
-        //            DepartmentName = department.DepartmentName
-        //        });
-        //    }
+        public int Create(Model.Dto.DepartmentDto department)
+        {
+            return AddOrUpdateDepartment(new Model.Department()
+            {
+                Id = -1,
+                DepartmentName = department.DepartmentName
+            });
+        }
 
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+        public int Update(Model.Department department)
+        {
+            return AddOrUpdateDepartment(department);
+        }
 
-        //public int Update(Model.Department department)
-        //{
-        //    try
-        //    {
-        //        return AddOrUpdateDepartment(department);
-        //    }
+        public int Delete(int Id)
+        {
+            var conn = _dbContext.GetConnection();
+            int retVal = 0;
 
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+            DynamicParameters dParams = new DynamicParameters();
+            dParams.Add("@Id", Id);
+            dParams.Add("@RetVal", retVal, DbType.Int32, ParameterDirection.ReturnValue);
 
-        //public int Delete(int Id)
-        //{
-        //    SqlConnection conn = new SqlConnection("Server=TAPPQA;Database=Training-NK-Company;Trusted_Connection=True;");
-            
-        //    try
-        //    {
-        //        conn.Open();
-        //    }
+            conn.Execute("spDeleteDepartment", dParams, null, null, CommandType.StoredProcedure);
 
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
+            retVal = dParams.Get<int>("@RetVal");
 
-        //    SqlParameter param = new SqlParameter("@RetVal", SqlDbType.Int);
-        //    param.Direction = ParameterDirection.ReturnValue;
-
-        //    SqlCommand cmd = new SqlCommand("spDeleteDepartment", conn);
-        //    cmd.CommandType = CommandType.StoredProcedure;
-        //    cmd.Parameters.AddWithValue("@Id", Id);
-        //    cmd.Parameters.Add(param);
-            
-        //    try
-        //    {
-        //        cmd.ExecuteNonQuery();
-        //        conn.Close();
-        //    }
-
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-
-        //    return (int)cmd.Parameters["@RetVal"].Value;
-        //}
+            return retVal;
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using CompanyStructuresWebAPI.Model;
+using CompanyStructuresWebAPI.Model.Dto;
 
 namespace CompanyStructuresWebAPI.Interface
 {
@@ -12,5 +13,11 @@ namespace CompanyStructuresWebAPI.Interface
         List<Department> GetDepartments();
 
         Department GetDepartmentById(int Id);
+
+        int Delete(int Id);
+
+        int Create(DepartmentDto department);
+
+        int Update(Department department);
     }
 }

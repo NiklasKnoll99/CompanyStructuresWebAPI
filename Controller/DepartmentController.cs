@@ -46,49 +46,45 @@ namespace CompanyStructuresWebAPI.Controller
                 return NoContent();
         }
 
-        //[HttpPost]
-        //public IActionResult Post([FromBody] Model.Dto.DepartmentDto department)
-        //{
-        //    if (department == null)
-        //        return BadRequest();
+        [HttpPost]
+        public IActionResult Post([FromBody] Model.Dto.DepartmentDto department)
+        {
+            if (department == null)
+                return BadRequest();
 
-        //    else
-        //    {
-        //        Repository.DepartmentRepository departmentRepo = Repository.DepartmentRepository.GetInstance();
+            else
+            { 
+                // Exception handling
+                _departmentRepo.Create(department);
 
-        //        // Exception handling
-        //        departmentRepo.Create(department);
+                return Created("departments", department);
+            }
+        }
 
-        //        return Created("departments", department);
-        //    }
-        //}
+        [HttpPut]
+        public IActionResult Put([FromBody] Model.Department department)
+        {
+            if ((department == null) || (department.DepartmentName == null))
+                return BadRequest();
 
-        //[HttpPut]
-        //public IActionResult Put([FromBody] Model.Department department)
-        //{
-        //    if ((department == null) || (department.DepartmentName == null))
-        //        return BadRequest();
+            else
+            {
+                // Exception handling
+                _departmentRepo.Update(department);
 
-        //    else
-        //    {
-        //        Repository.DepartmentRepository departmentRepo = Repository.DepartmentRepository.GetInstance();
+                return Ok();
+            }
+        }
 
-        //        // Exception handling
-        //        departmentRepo.Update(department);
+        [HttpDelete("{Id}")]
+        public IActionResult Delete(int Id)
+        {
+            // Exception handling
+            if (_departmentRepo.Delete(Id) != -1)
+                return Ok();
 
-        //        return Ok();
-        //    }
-        //}
-
-        //[HttpDelete("{Id}")]
-        //public IActionResult Delete(int Id)
-        //{
-        //    Repository.DepartmentRepository departmentRepo = Repository.DepartmentRepository.GetInstance();
-
-        //    // Exception handling
-        //    departmentRepo.Delete(Id);
-
-        //    return Ok();
-        //}
+            else
+                return NoContent();
+        }
     }
 }
