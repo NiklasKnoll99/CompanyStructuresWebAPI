@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using CompanyStructuresWebAPI.Repository;
 using CompanyStructuresWebAPI.Helper;
+using CompanyStructuresWebAPI.APIException;
+using CompanyStructuresWebAPI.Constant;
 
 namespace CompanyStructuresWebAPI.Interface
 {
@@ -23,7 +25,30 @@ namespace CompanyStructuresWebAPI.Interface
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<Model.Company> companies = _companyRepo.GetCompanies();
+            List<Model.Company> companies = null;
+
+            try
+            {
+                companies = _companyRepo.GetCompanies();
+            }
+
+            catch (RepositoryException rEx)
+            {
+                switch (rEx.GetExType())
+                {
+                    case (short)RepositoryException.Type.CONNECTION_EXCEPTION:
+                        Console.WriteLine(ExceptionConstants.ConnectionErrorMsg);
+                        break;
+
+                    case (short)RepositoryException.Type.READ_EXCEPTION:
+                        Console.WriteLine(ExceptionConstants.ReadErrorMsg);
+                        break;
+
+                    case (short)RepositoryException.Type.SPROCEDURE_EXECUTION_EXCEPTION:
+                        Console.WriteLine(ExceptionConstants.ExecutionErrorMsg);
+                        break;
+                }
+            }
 
             if (companies != null)
             {

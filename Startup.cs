@@ -12,6 +12,10 @@ using CompanyStructuresWebAPI.Helper;
 using CompanyStructuresWebAPI.Repository;
 using Microsoft.Extensions.Configuration;
 using CompanyStructuresWebAPI.Model;
+using TobitLogger.Core;
+using TobitLogger.Logstash;
+using TobitLogger.Middleware;
+using Microsoft.Extensions.Logging;
 
 namespace CompanyStructuresWebAPI
 {
@@ -38,12 +42,18 @@ namespace CompanyStructuresWebAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddLogstashLogger(config.GetSection("Logger"));
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseRequestLogging();
+            //app.UseHttpsRedirection();
+            //app.UseAuthentication();
 
             app.UseMvc();
 

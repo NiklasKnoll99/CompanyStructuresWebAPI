@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Dapper;
 using CompanyStructuresWebAPI.Interface;
 using CompanyStructuresWebAPI.APIException;
+using CompanyStructuresWebAPI.Constant;
 
 namespace CompanyStructuresWebAPI.Repository
 {
@@ -30,9 +31,9 @@ namespace CompanyStructuresWebAPI.Repository
                 conn = _dbContext.GetConnection();
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ExceptionConstants.ConnectionErrorMsg);
             }
 
             int retVal = 0;
@@ -47,9 +48,9 @@ namespace CompanyStructuresWebAPI.Repository
                 conn.Execute("spCreateOrUpdateDepartment", dParams, null, null, CommandType.StoredProcedure);
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new RepositoryException(RepositoryException.Type.SPROCEDURE_EXECUTION_EXCEPTION, ex.Message);
+                throw new RepositoryException(RepositoryException.Type.SPROCEDURE_EXECUTION_EXCEPTION, ExceptionConstants.ExecutionErrorMsg);
             }
 
             retVal = dParams.Get<int>("@RetVal");
@@ -66,9 +67,9 @@ namespace CompanyStructuresWebAPI.Repository
                 conn = _dbContext.GetConnection();
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ExceptionConstants.ConnectionErrorMsg);
             }
 
             string cmd = "SELECT Id, DepartmentName, CompanyName FROM viDepartment";
@@ -79,9 +80,9 @@ namespace CompanyStructuresWebAPI.Repository
                 departments = conn.Query<Model.Department>(cmd).ToList();
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new RepositoryException(RepositoryException.Type.READ_EXCEPTION, ex.Message);
+                throw new RepositoryException(RepositoryException.Type.READ_EXCEPTION, ExceptionConstants.ReadErrorMsg);
             }
 
             return departments;
@@ -96,9 +97,9 @@ namespace CompanyStructuresWebAPI.Repository
                 conn = _dbContext.GetConnection();
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ExceptionConstants.ConnectionErrorMsg);
             }
 
             string cmd = "SELECT Id, DepartmentName, CompanyName FROM viDepartment WHERE Id = " + Id.ToString();
@@ -109,9 +110,9 @@ namespace CompanyStructuresWebAPI.Repository
                 department = conn.QueryFirstOrDefault<Model.Department>(cmd);
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new RepositoryException(RepositoryException.Type.READ_EXCEPTION, ex.Message);
+                throw new RepositoryException(RepositoryException.Type.READ_EXCEPTION, ExceptionConstants.ReadErrorMsg);
             }
 
             return department;
@@ -156,9 +157,9 @@ namespace CompanyStructuresWebAPI.Repository
                 conn = _dbContext.GetConnection();
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ex.Message);
+                throw new RepositoryException(RepositoryException.Type.CONNECTION_EXCEPTION, ExceptionConstants.ConnectionErrorMsg);
             }
 
             int retVal = 0;
@@ -172,9 +173,9 @@ namespace CompanyStructuresWebAPI.Repository
                 conn.Execute("spDeleteDepartment", dParams, null, null, CommandType.StoredProcedure);
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new RepositoryException(RepositoryException.Type.SPROCEDURE_EXECUTION_EXCEPTION, ex.Message);
+                throw new RepositoryException(RepositoryException.Type.SPROCEDURE_EXECUTION_EXCEPTION, ExceptionConstants.ExecutionErrorMsg);
             }
 
             retVal = dParams.Get<int>("@RetVal");
