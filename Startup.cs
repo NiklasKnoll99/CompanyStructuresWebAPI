@@ -10,16 +10,27 @@ using Microsoft.Extensions.DependencyInjection;
 using CompanyStructuresWebAPI.Interface;
 using CompanyStructuresWebAPI.Helper;
 using CompanyStructuresWebAPI.Repository;
+using Microsoft.Extensions.Configuration;
+using CompanyStructuresWebAPI.Model;
 
 namespace CompanyStructuresWebAPI
 {
     public class Startup
     {
+        public IConfiguration config { get; }
+
+        public Startup(IConfiguration config)
+        {
+            this.config = config;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            services.Configure<ConnectionStrings>(config.GetSection("ConnectionStrings"));
 
             services.AddSingleton<IDbContext, DbContext>();
             services.AddScoped<ICompanyRepository, CompanyRepository>();
