@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CompanyStructuresWebAPI.Interface;
 using CompanyStructuresWebAPI.Helper;
+using CompanyStructuresWebAPI.APIException;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace CompanyStructuresWebAPI.Controller
 {
@@ -14,15 +17,29 @@ namespace CompanyStructuresWebAPI.Controller
     {
         readonly IDepartmentRepository _departmentRepo;
 
-        public DepartmentController(IDepartmentRepository departmentRepo)
+        Logger _logger;
+
+        public DepartmentController(ILoggerFactory loggerFactory, IDepartmentRepository departmentRepo)
         {
             _departmentRepo = departmentRepo;
+            _logger = new Logger(loggerFactory.CreateLogger<DepartmentController>());
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<Model.Department> departments = _departmentRepo.GetDepartments();
+            List<Model.Department> departments = null;
+
+            try
+            {
+                departments = _departmentRepo.GetDepartments();
+            }
+
+            catch (RepositoryException rEx)
+            {
+                _logger.Log(rEx.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
             if (departments != null)
             {
@@ -38,7 +55,18 @@ namespace CompanyStructuresWebAPI.Controller
         [HttpGet("{Id}")]
         public IActionResult Get(int Id)
         {
-            Model.Department department = _departmentRepo.GetDepartmentById(Id);
+            Model.Department department = null;
+
+            try
+            {
+                department = _departmentRepo.GetDepartmentById(Id);
+            }
+
+            catch (RepositoryException rEx)
+            {
+                _logger.Log(rEx.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
             if (department != null)
                 return Ok(department);
@@ -57,8 +85,16 @@ namespace CompanyStructuresWebAPI.Controller
 
                 else
                 {
-                    // Exception handling
-                    _departmentRepo.Create(department);
+                    try
+                    {
+                        _departmentRepo.Create(department);
+                    }
+
+                    catch (RepositoryException rEx)
+                    {
+                        _logger.Log(rEx.Message);
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    }
 
                     return Created("departments", department);
                 }
@@ -78,8 +114,16 @@ namespace CompanyStructuresWebAPI.Controller
 
                 else
                 {
-                    // Exception handling
-                    _departmentRepo.Update(department);
+                    try
+                    {
+                        _departmentRepo.Update(department);
+                    }
+
+                    catch (RepositoryException rEx)
+                    {
+                        _logger.Log(rEx.Message);
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    }
 
                     return Ok();
                 }
@@ -94,8 +138,20 @@ namespace CompanyStructuresWebAPI.Controller
         {
             if (Authenticator.isAuthenticated(Request.Headers["Authorization"]))
             {
-                // Exception handling
-                if (_departmentRepo.Delete(Id) != -1)
+                int result = 0;
+
+                try
+                {
+                    result = _departmentRepo.Delete(Id);
+                }
+
+                catch (RepositoryException rEx)
+                {
+                    _logger.Log(rEx.Message);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+
+                if (result != -1)
                     return Ok();
 
                 else

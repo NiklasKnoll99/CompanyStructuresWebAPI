@@ -9,6 +9,7 @@ using CompanyStructuresWebAPI.Repository;
 using CompanyStructuresWebAPI.Helper;
 using CompanyStructuresWebAPI.APIException;
 using CompanyStructuresWebAPI.Constant;
+using Microsoft.Extensions.Logging;
 
 namespace CompanyStructuresWebAPI.Interface
 {
@@ -17,9 +18,12 @@ namespace CompanyStructuresWebAPI.Interface
     {
         readonly ICompanyRepository _companyRepo;
 
-        public CompanyController(ICompanyRepository companyRepo)
+        Logger _logger;
+
+        public CompanyController(ILoggerFactory loggerFactory, ICompanyRepository companyRepo)
         {
             _companyRepo = companyRepo;
+            _logger = new Logger(loggerFactory.CreateLogger<CompanyController>());
         }
 
         [HttpGet]
@@ -34,20 +38,8 @@ namespace CompanyStructuresWebAPI.Interface
 
             catch (RepositoryException rEx)
             {
-                switch (rEx.GetExType())
-                {
-                    case (short)RepositoryException.Type.CONNECTION_EXCEPTION:
-                        Console.WriteLine(ExceptionConstants.ConnectionErrorMsg);
-                        break;
-
-                    case (short)RepositoryException.Type.READ_EXCEPTION:
-                        Console.WriteLine(ExceptionConstants.ReadErrorMsg);
-                        break;
-
-                    case (short)RepositoryException.Type.SPROCEDURE_EXECUTION_EXCEPTION:
-                        Console.WriteLine(ExceptionConstants.ExecutionErrorMsg);
-                        break;
-                }
+                _logger.Log(rEx.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
             if (companies != null)
@@ -64,7 +56,18 @@ namespace CompanyStructuresWebAPI.Interface
         [HttpGet("{Id}")]
         public IActionResult Get(int Id)
         {
-            Model.Company company = _companyRepo.GetCompanyById(Id);
+            Model.Company company = null;
+
+            try
+            {
+                company = _companyRepo.GetCompanyById(Id);
+            }
+
+            catch (RepositoryException rEx)
+            {
+                _logger.Log(rEx.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
             if (company != null)
                 return Ok(company);
@@ -83,8 +86,17 @@ namespace CompanyStructuresWebAPI.Interface
 
                 else
                 {
-                    // Exception handling
-                    _companyRepo.Create(company);
+                    
+                    try
+                    {
+                        _companyRepo.Create(company);
+                    }
+
+                    catch (RepositoryException rEx)
+                    {
+                        _logger.Log(rEx.Message);
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    }
 
                     return Created("companies", company);
                 }
@@ -104,8 +116,16 @@ namespace CompanyStructuresWebAPI.Interface
 
                 else
                 {
-                    // Exception handling
-                    _companyRepo.Update(company);
+                    try
+                    {
+                        _companyRepo.Update(company);
+                    }
+
+                    catch (RepositoryException rEx)
+                    {
+                        _logger.Log(rEx.Message);
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    }
 
                     return Ok();
                 }
@@ -120,8 +140,20 @@ namespace CompanyStructuresWebAPI.Interface
         {
             if (Authenticator.isAuthenticated(Request.Headers["Authorization"]))
             {
-                // Exception handling
-                if (_companyRepo.Delete(Id) != -1)
+                int result = 0;
+
+                try
+                {
+                    result = _companyRepo.Delete(Id);
+                }
+
+                catch (RepositoryException rEx)
+                {
+                    _logger.Log(rEx.Message);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+
+                if (result != -1)
                     return Ok();
 
                 else

@@ -9,7 +9,8 @@ namespace CompanyStructuresWebAPI.APIException
     public class RepositoryException : Exception
     {
         short _type;
-        string _msg;
+
+        public readonly string Message;
 
         public enum Type
         {
@@ -22,7 +23,7 @@ namespace CompanyStructuresWebAPI.APIException
         public RepositoryException(Type type, string msg)
         {
             _type = (short)type;
-            _msg = msg;
+            Message = msg;
         }
 
         public RepositoryException(Type type)
@@ -32,7 +33,7 @@ namespace CompanyStructuresWebAPI.APIException
 
         public RepositoryException(string message) : base(message)
         {
-            _msg = message;
+            Message = message;
         }
 
         public short GetExType()
